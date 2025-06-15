@@ -1,13 +1,12 @@
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { api, HydrateClient } from "~/trpc/server";
-import { SpotifyArtistSearch } from "./_components/SpotifyArtistSearch";
 import { SpotifyAlbumSearch } from "./_components/SpotifyAlbumSearch";
 import Greeting from "./_components/Greeting";
 
 export default async function Home() {
   // const hello = await api.spotify.hello();
 
-  void api.post.getLatest.prefetch();
+  void api.spotify.getFavorites.prefetch();
 
   return (
     <HydrateClient>
@@ -26,7 +25,6 @@ export default async function Home() {
             <SignInButton />
           </SignedOut>
           <div className="flex w-full max-w-4xl flex-row gap-1">
-            <SpotifyArtistSearch />
             <SpotifyAlbumSearch />
           </div>
         </div>

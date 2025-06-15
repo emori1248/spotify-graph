@@ -6,13 +6,27 @@ import { api } from "~/trpc/react";
 export function SpotifyAlbumSearch() {
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
+  const [favoriteAlbums] = api.spotify.getFavorites.useSuspenseQuery();
+  const favoriteAlbumIds = favoriteAlbums.map((album) => album.albumId);
+
+  const utils = api.useUtils();
+
+  const addFavorite = api.spotify.createFavorite.useMutation({
+    onSuccess: async () => {
+      await utils.spotify.invalidate();
+    },
+  });
 
   // tRPC query - only runs when submittedQuery changes
-  const { data: albums, isLoading, error } = api.spotify.searchAlbums.useQuery(
+  const {
+    data: albums,
+    isLoading,
+    error,
+  } = api.spotify.searchAlbums.useQuery(
     { input: submittedQuery },
     {
       enabled: !!submittedQuery, // Only run query when we have a submitted query
-    }
+    },
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -23,7 +37,7 @@ export function SpotifyAlbumSearch() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="mx-auto max-w-2xl p-6">
       <form onSubmit={handleSubmit} className="mb-6">
         <div className="flex gap-2">
           <input
@@ -45,35 +59,49 @@ export function SpotifyAlbumSearch() {
         </div>
       </form>
 
-      {error && (
-        <div className="text-red-600 mb-4">
-          Error: {error.message}
-        </div>
-      )}
+      {error && <div className="mb-4 text-red-600">Error: {error.message}</div>}
 
       {albums && albums.length > 0 && (
         <div className="space-y-6">
-          <h2 className="text-xl font-semibold">Results for "{submittedQuery}":</h2>
+          <h2 className="text-xl font-semibold">
+            Results for "{submittedQuery}":
+          </h2>
           {albums.map((album) => (
-            <div key={album.id} className="flex items-center gap-4 p-4 rounded-3xl h-26 bg-white/10">
+            <div
+              key={album.id}
+              className="flex h-26 items-center gap-4 rounded-3xl bg-white/10 p-4"
+            >
               {album.images[0] && (
                 <img
                   src={album.images[0].url}
                   alt={album.name}
-                  className="w-16 h-16 rounded-full object-cover"
+                  className="h-16 w-16 rounded-full object-cover"
                 />
               )}
               <div>
                 <h3 className="font-semibold">{album.name}</h3>
                 <p className="text-sm text-gray-300">
                   {album.artists.map((artist, index) => (
-                  <span key={artist.id}>
-                    {artist.name}
-                    {index < album.artists.length - 1 && ", "}
-                  </span>
+                    <span key={artist.id}>
+                      {artist.name}
+                      {index < album.artists.length - 1 && ", "}
+                    </span>
                   ))}
                 </p>
               </div>
+
+              <button
+                className="ml-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/10 text-2xl font-bold text-white transition-colors hover:bg-white/20"
+                onClick={(e) => {
+                  e.preventDefault();
+                  addFavorite.mutate({
+                    albumId: album.id,
+                    albumTitle: album.name,
+                  });
+                }}
+              >
+                {favoriteAlbumIds.includes(album.id) ? "❤️" : "+"}
+              </button>
             </div>
           ))}
         </div>
