@@ -1,11 +1,12 @@
-import { PrismaClient } from "@prisma/client";
 import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 
 import { env } from "~/env";
 
 const createSpotifyClient = () =>
-        SpotifyApi.withClientCredentials(process.env.SPOTIFY_CLIENT_ID!, process.env.SPOTIFY_CLIENT_SECRET!);
-  
+  SpotifyApi.withClientCredentials(
+    process.env.SPOTIFY_CLIENT_ID!,
+    process.env.SPOTIFY_CLIENT_SECRET!,
+  );
 
 const globalForSpotify = globalThis as unknown as {
   spotify: ReturnType<typeof createSpotifyClient> | undefined;
