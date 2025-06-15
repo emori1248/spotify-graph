@@ -22,4 +22,20 @@ export const spotifyRouter = createTRPCRouter({
         ...data,
       };
     }),
+    searchArtists: publicProcedure
+    .input(z.object({ input: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const items = await ctx.spotify.search(input.input, ["artist"]);
+      
+      const artists = items.artists?.items.map(artist => ({
+        id: artist.id,
+        name: artist.name,
+        genres: artist.genres,
+        images: artist.images,
+        followers: artist.followers,
+      })) || [];
+
+      return artists;
+    }
+  ),
 });
