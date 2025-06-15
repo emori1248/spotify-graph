@@ -11,6 +11,7 @@ import { SimilarityGraph } from "./SimilarityGraph";
 import { TagDialog } from "./TagDialog";
 import type { Album, Tag } from "./types";
 import { predefinedTags } from "./mock-data";
+import { UserButton } from "@clerk/nextjs";
 
 export default function MusicSimilarityApp() {
   const [favorites, setFavorites] = useState<Album[]>([]);
@@ -69,7 +70,7 @@ export default function MusicSimilarityApp() {
         />
 
         <SidebarInset className="flex-1">
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 pr-8">
             <SidebarTrigger className="-ml-1" />
             <div className="flex min-w-0 flex-1 items-center gap-2">
               <h1 className="truncate pl-8 text-xl font-semibold">
@@ -81,6 +82,7 @@ export default function MusicSimilarityApp() {
                 </span>
               )}
             </div>
+            <UserButton />
           </header>
 
           <main className="flex-1 p-4">
