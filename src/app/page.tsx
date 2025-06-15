@@ -1,9 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
-
-import { LatestPost } from "~/app/_components/post";
 import { api, HydrateClient } from "~/trpc/server";
-import { SpotifySearch } from "./_components/SpotifySearch";
+import { SpotifyArtistSearch } from "./_components/SpotifyArtistSearch";
+import { SpotifyAlbumSearch } from "./_components/SpotifyAlbumSearch";
 
 export default async function Home() {
   // const hello = await api.spotify.hello();
@@ -17,7 +14,10 @@ export default async function Home() {
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
             <span className="text-[hsl(280,100%,70%)]">Spotify</span> Thing
           </h1>
-          <SpotifySearch/>
+          <div className="flex w-full max-w-4xl flex-row gap-1">
+            <SpotifyArtistSearch/>
+            <SpotifyAlbumSearch/>
+          </div>
         </div>
       </main>
     </HydrateClient>

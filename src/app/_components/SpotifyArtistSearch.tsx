@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { api } from "~/trpc/react";
 
-export function SpotifySearch() {
+export function SpotifyArtistSearch() {
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
 
@@ -52,10 +52,10 @@ export function SpotifySearch() {
       )}
 
       {artists && artists.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           <h2 className="text-xl font-semibold">Results for "{submittedQuery}":</h2>
           {artists.map((artist) => (
-            <div key={artist.id} className="flex items-center gap-4 p-4 border rounded-lg">
+            <div key={artist.id} className="flex items-center gap-4 p-4 rounded-3xl h-26 bg-white/10">
               {artist.images[0] && (
                 <img
                   src={artist.images[0].url}
@@ -65,11 +65,11 @@ export function SpotifySearch() {
               )}
               <div>
                 <h3 className="font-semibold">{artist.name}</h3>
-                <p className="text-gray-600">
+                <p className="text-gray-300">
                   {artist.followers.total.toLocaleString()} followers
                 </p>
                 {artist.genres.length > 0 && (
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-300">
                     Genres: {artist.genres.slice(0, 3).join(", ")}
                   </p>
                 )}
