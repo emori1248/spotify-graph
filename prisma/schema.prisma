@@ -20,11 +20,37 @@ model Post {
 }
 
 model FavoriteAlbum {
-  id         Int    @id @default(autoincrement())
-  albumId    String @unique
-  albumTitle String
-  userId     String
+  id                 Int                 @id @default(autoincrement())
+  albumId            String              @unique
+  albumTitle         String
+  userId             String
+  favoritedAlbumTags FavoritedAlbumTag[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Tag {
+  id                 Int                 @id @default(autoincrement())
+  name               String              @unique
+  favoritedAlbumTags FavoritedAlbumTag[]
+  color              String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FavoritedAlbumTag {
+  id              Int      @id @default(autoincrement())
+  favoriteAlbumId Int
+  tagId           Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  favoriteAlbum FavoriteAlbum @relation(fields: [favoriteAlbumId], references: [id], onDelete: Cascade)
+  tag           Tag           @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([favoriteAlbumId, tagId])
+  @@index([tagId])
+  @@index([favoriteAlbumId])
 }
