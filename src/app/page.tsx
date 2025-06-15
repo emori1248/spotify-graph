@@ -1,6 +1,7 @@
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { api, HydrateClient } from "~/trpc/server";
 import { SpotifyAlbumSearch } from "./_components/SpotifyAlbumSearch";
+import { FavoritesList } from "./_components/FavoritesList";
 import Greeting from "./_components/Greeting";
 
 export default async function Home() {
@@ -26,6 +27,7 @@ export default async function Home() {
           </SignedOut>
           <div className="flex w-full max-w-4xl flex-row gap-1">
             <SpotifyAlbumSearch />
+            <FavoritesList />
           </div>
         </div>
       </main>

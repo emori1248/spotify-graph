@@ -67,4 +67,16 @@ export const spotifyRouter = createTRPCRouter({
       where: { userId },
     });
   }),
+
+  getFavoritesFull: privateProcedure.query(async ({ ctx }) => {
+    const { userId } = ctx.auth;
+    if (!userId) throw new Error("Not authenticated");
+
+    const favorites = await ctx.db.favoriteAlbum.findMany({
+      where: { userId },
+      select: { albumId: true },
+    });
+
+    return ctx.spotify.albums.get(favorites.map((f) => f.albumId));
+  }),
 });
