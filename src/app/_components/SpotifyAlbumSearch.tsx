@@ -6,8 +6,8 @@ import { api } from "~/trpc/react";
 export function SpotifyAlbumSearch() {
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
-  const [favoriteAlbums] = api.spotify.getFavorites.useSuspenseQuery();
-  const favoriteAlbumIds = favoriteAlbums.map((album) => album.albumId);
+  const [favoriteAlbums] = api.spotify.getFavoritesFull.useSuspenseQuery();
+  const favoriteAlbumIds = favoriteAlbums.map((album) => album.id);
 
   const utils = api.useUtils();
 

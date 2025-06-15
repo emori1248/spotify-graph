@@ -37,6 +37,7 @@ export const spotifyRouter = createTRPCRouter({
             name: artist.name,
           })),
           images: album.images,
+          genres: ["test genre"],
         })) || [];
 
       return albums;
@@ -77,6 +78,13 @@ export const spotifyRouter = createTRPCRouter({
       select: { albumId: true },
     });
 
-    return ctx.spotify.albums.get(favorites.map((f) => f.albumId));
+    return ctx.spotify.albums
+      .get(favorites.map((f) => f.albumId))
+      .then((albums) => {
+        return albums.map((album) => ({
+          ...album,
+          genres: ["test genre"],
+        }));
+      });
   }),
 });

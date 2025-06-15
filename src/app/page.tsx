@@ -5,8 +5,6 @@ import { FavoritesList } from "./_components/FavoritesList";
 import Greeting from "./_components/Greeting";
 
 export default async function Home() {
-  // const hello = await api.spotify.hello();
-
   void api.spotify.getFavorites.prefetch();
 
   return (

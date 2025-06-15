@@ -8,33 +8,45 @@ import { Card, CardContent } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { mockAlbums } from "./mock-data";
 import type { Album } from "./types";
+import { api } from "~/trpc/react";
 
 interface AlbumSearchProps {
   onAddToFavorites: (album: Album) => void;
   favorites: Album[];
 }
 
-export function AlbumSearch({ onAddToFavorites, favorites }: AlbumSearchProps) {
+export function AlbumSearch({ onAddToFavorites }: AlbumSearchProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Album[]>([]);
+  const [submittedQuery, setSubmittedQuery] = useState("");
+  const [favorites] = api.spotify.getFavorites.useSuspenseQuery();
+
+  const utils = api.useUtils();
+
+  const addFavorite = api.spotify.createFavorite.useMutation({
+    onSuccess: async () => {
+      await utils.spotify.invalidate();
+    },
+  });
+
+  const {
+    data: searchResults,
+    isLoading,
+    error,
+  } = api.spotify.searchAlbums.useQuery(
+    { input: submittedQuery },
+    {
+      enabled: !!submittedQuery, // Only run query when we have a submitted query
+    },
+  );
 
   const handleSearch = () => {
-    if (!searchQuery.trim()) {
-      setSearchResults([]);
-      return;
+    if (searchQuery.trim()) {
+      setSubmittedQuery(searchQuery.trim());
     }
-
-    // Mock search - filter albums by name or artist
-    const results = mockAlbums.filter(
-      (album) =>
-        album.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        album.artist.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
-    setSearchResults(results);
   };
 
   const isInFavorites = (albumId: string) => {
-    return favorites.some((fav) => fav.id === albumId);
+    return favorites.some((fav) => fav.albumId === albumId);
   };
 
   return (
@@ -52,19 +64,22 @@ export function AlbumSearch({ onAddToFavorites, favorites }: AlbumSearchProps) {
       </div>
 
       <div className="max-h-96 space-y-2 overflow-y-auto">
-        {searchResults.map((album) => (
+        {isLoading && <p className="p-2">Loading...</p>}
+        {searchResults?.map((album) => (
           <Card key={album.id} className="p-2">
             <CardContent className="p-0">
               <div className="flex items-center gap-3">
                 <img
-                  src={album.image || "/placeholder.svg"}
+                  src={album.images[0]?.url || "/placeholder.svg"}
                   alt={album.name}
                   className="h-12 w-12 rounded object-cover"
+                  width={album.images[0]?.width}
+                  height={album.images[0]?.height}
                 />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{album.name}</p>
                   <p className="text-muted-foreground truncate text-xs">
-                    {album.artist}
+                    {album.artists.map((artist) => artist.name).join(", ")}
                   </p>
                   <div className="mt-1 flex gap-1">
                     {album.genres.slice(0, 2).map((genre) => (
@@ -81,7 +96,13 @@ export function AlbumSearch({ onAddToFavorites, favorites }: AlbumSearchProps) {
                 <Button
                   size="icon"
                   variant={isInFavorites(album.id) ? "default" : "outline"}
-                  onClick={() => onAddToFavorites(album)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    addFavorite.mutate({
+                      albumId: album.id,
+                      albumTitle: album.name,
+                    });
+                  }}
                   disabled={isInFavorites(album.id)}
                 >
                   {isInFavorites(album.id) ? (

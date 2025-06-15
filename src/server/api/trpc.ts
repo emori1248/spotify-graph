@@ -27,10 +27,11 @@ import { auth } from "@clerk/nextjs/server";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const authResult = await auth();
   return {
     spotify,
     db,
-    auth: await auth(),
+    auth: authResult,
     ...opts,
   };
 };
@@ -111,7 +112,9 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 
 const isAuthed = t.middleware(({ next, ctx }) => {
   if (!ctx.auth.userId) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+    });
   }
   return next({
     ctx: {

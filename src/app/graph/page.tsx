@@ -1,8 +1,10 @@
-import { HydrateClient } from "~/trpc/server";
+import { api, HydrateClient } from "~/trpc/server";
 import MusicSimilarityApp from "../_components/graph/MusicGraph";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 
 export default async function Page() {
+  void api.spotify.getFavorites.prefetch();
+
   return (
     <HydrateClient>
       <SignedIn>
