@@ -12,22 +12,35 @@ import { TagDialog } from "./TagDialog";
 import type { Album, Tag } from "./types";
 import { predefinedTags } from "./mock-data";
 import { UserButton } from "@clerk/nextjs";
+import { api } from "~/trpc/react";
 
 export default function MusicSimilarityApp() {
-  const [favorites, setFavorites] = useState<Album[]>([]);
+  const [favorites] = api.spotify.getFavoritesFull.useSuspenseQuery();
   const [availableTags, setAvailableTags] = useState<Tag[]>(predefinedTags);
   const [selectedAlbumForTagging, setSelectedAlbumForTagging] =
     useState<Album | null>(null);
+
   const [isTagDialogOpen, setIsTagDialogOpen] = useState(false);
 
-  const handleAddToFavorites = (album: Album) => {
-    if (!favorites.some((fav) => fav.id === album.id)) {
-      setFavorites((prev) => [...prev, { ...album, isFavorite: true }]);
-    }
+  const utils = api.useUtils();
+
+  const addFavorite = api.spotify.createFavorite.useMutation({
+    onSuccess: async () => {
+      await utils.spotify.invalidate();
+    },
+  });
+
+  const handleAddToFavorites = (id: string) => {
+    addFavorite.mutate({
+      albumId: id,
+    });
   };
 
-  const handleRemoveFromFavorites = (albumId: string) => {
-    setFavorites((prev) => prev.filter((fav) => fav.id !== albumId));
+  // TODO
+  const handleRemoveFromFavorites = (id: string) => {
+    addFavorite.mutate({
+      albumId: id,
+    });
   };
 
   const handleOpenTagDialog = (album: Album) => {
@@ -36,9 +49,10 @@ export default function MusicSimilarityApp() {
   };
 
   const handleUpdateAlbumTags = (albumId: string, tags: string[]) => {
-    setFavorites((prev) =>
-      prev.map((album) => (album.id === albumId ? { ...album, tags } : album)),
-    );
+    // TODO
+    // setFavorites((prev) =>
+    //   prev.map((album) => (album.id === albumId ? { ...album, tags } : album)),
+    // );
   };
 
   const handleCreateTag = (tagName: string) => {
@@ -59,6 +73,12 @@ export default function MusicSimilarityApp() {
     setAvailableTags((prev) => [...prev, newTag]);
   };
 
+  const testTag: Tag = {
+    color: "#3B82F6",
+    id: "0",
+    name: "Test Tag",
+    isCustom: false,
+  };
   return (
     <SidebarProvider defaultOpen>
       <div className="flex h-screen w-full">
@@ -86,7 +106,12 @@ export default function MusicSimilarityApp() {
           </header>
 
           <main className="flex-1 p-4">
-            <SimilarityGraph favorites={favorites} />
+            {/* TODO */}
+            <SimilarityGraph
+              favorites={favorites.map((favorite) => {
+                return { ...favorite, tags: [testTag] };
+              })}
+            />
           </main>
         </SidebarInset>
       </div>

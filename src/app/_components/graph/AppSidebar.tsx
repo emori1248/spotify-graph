@@ -21,8 +21,8 @@ import type { Album } from "./types";
 
 interface AppSidebarProps {
   favorites: Album[];
-  onAddToFavorites: (album: Album) => void;
-  onRemoveFromFavorites: (albumId: string) => void;
+  onAddToFavorites: (id: string) => void;
+  onRemoveFromFavorites: (id: string) => void;
   onOpenTagDialog: (album: Album) => void;
 }
 

@@ -43,31 +43,30 @@ export const spotifyRouter = createTRPCRouter({
       return albums;
     }),
   createFavorite: privateProcedure
-    .input(
-      z.object({ albumId: z.string().min(1), albumTitle: z.string().min(1) }),
-    )
+    .input(z.object({ albumId: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx.auth;
       if (!userId) throw new Error("Not authenticated");
 
-      const album = ctx.spotify.albums.get(input.albumId);
+      const album = await ctx.spotify.albums.get(input.albumId);
       if (!album) throw new Error("Album not found");
 
       return ctx.db.favoriteAlbum.create({
         data: {
-          ...input,
+          albumId: album.id,
+          albumTitle: album.name,
           userId,
         },
       });
     }),
-  getFavorites: privateProcedure.query(async ({ ctx }) => {
-    const { userId } = ctx.auth;
-    if (!userId) throw new Error("Not authenticated");
+  // getFavorites: privateProcedure.query(async ({ ctx }) => {
+  //   const { userId } = ctx.auth;
+  //   if (!userId) throw new Error("Not authenticated");
 
-    return ctx.db.favoriteAlbum.findMany({
-      where: { userId },
-    });
-  }),
+  //   return ctx.db.favoriteAlbum.findMany({
+  //     where: { userId },
+  //   });
+  // }),
 
   getFavoritesFull: privateProcedure.query(async ({ ctx }) => {
     const { userId } = ctx.auth;

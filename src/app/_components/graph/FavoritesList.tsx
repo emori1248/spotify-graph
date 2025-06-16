@@ -34,26 +34,28 @@ export function FavoritesList({
           <CardContent className="p-0">
             <div className="flex items-center gap-3">
               <img
-                src={album.image || "/placeholder.svg"}
+                src={album.images[0]?.url || "/placeholder.svg"}
                 alt={album.name}
                 className="h-12 w-12 rounded object-cover"
               />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">{album.name}</p>
                 <p className="text-muted-foreground truncate text-xs">
-                  {album.artist}
+                  {/* TODO */}
+                  {album.artists[0]?.name}
                 </p>
                 <div className="mt-1 flex flex-wrap gap-1">
-                  {album.tags.slice(0, 2).map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
-                      {tag}
+                  {/* TODO needs to pull user tags */}
+                  {/* {album.tags.slice(0, 2).map((tag) => (
+                    <Badge key={tag.id} variant="outline" className="text-xs">
+                      {tag.name}
                     </Badge>
-                  ))}
-                  {album.tags.length > 2 && (
+                  ))} */}
+                  {/* {album.tags.length > 2 && (
                     <Badge variant="outline" className="text-xs">
                       +{album.tags.length - 2}
                     </Badge>
-                  )}
+                  )} */}
                 </div>
               </div>
               <div className="flex flex-col gap-1">

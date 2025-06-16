@@ -6,27 +6,25 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
-import { mockAlbums } from "./mock-data";
-import type { Album } from "./types";
 import { api } from "~/trpc/react";
+import type { Album } from "./types";
 
 interface AlbumSearchProps {
-  onAddToFavorites: (album: Album) => void;
+  onAddToFavorites: (id: string) => void;
   favorites: Album[];
 }
 
-export function AlbumSearch({ onAddToFavorites }: AlbumSearchProps) {
+export function AlbumSearch({ onAddToFavorites, favorites }: AlbumSearchProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
-  const [favorites] = api.spotify.getFavorites.useSuspenseQuery();
 
-  const utils = api.useUtils();
+  // const utils = api.useUtils();
 
-  const addFavorite = api.spotify.createFavorite.useMutation({
-    onSuccess: async () => {
-      await utils.spotify.invalidate();
-    },
-  });
+  // const addFavorite = api.spotify.createFavorite.useMutation({
+  //   onSuccess: async () => {
+  //     await utils.spotify.invalidate();
+  //   },
+  // });
 
   const {
     data: searchResults,
@@ -46,7 +44,7 @@ export function AlbumSearch({ onAddToFavorites }: AlbumSearchProps) {
   };
 
   const isInFavorites = (albumId: string) => {
-    return favorites.some((fav) => fav.albumId === albumId);
+    return favorites.some((fav) => fav.id === albumId);
   };
 
   return (
@@ -98,10 +96,7 @@ export function AlbumSearch({ onAddToFavorites }: AlbumSearchProps) {
                   variant={isInFavorites(album.id) ? "default" : "outline"}
                   onClick={(e) => {
                     e.preventDefault();
-                    addFavorite.mutate({
-                      albumId: album.id,
-                      albumTitle: album.name,
-                    });
+                    onAddToFavorites(album.id);
                   }}
                   disabled={isInFavorites(album.id)}
                 >

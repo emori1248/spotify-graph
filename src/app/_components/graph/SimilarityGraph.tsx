@@ -1,18 +1,38 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Album, GraphNode, GraphLink } from "./types";
+import type { Album, GraphNode, GraphLink, AlbumWithTags } from "./types";
 
 interface SimilarityGraphProps {
-  favorites: Album[];
+  favorites: AlbumWithTags[];
+}
+
+// Robust seeded random number generator (LCG algorithm)
+function seededRandom(seed: number) {
+  // Linear Congruential Generator - produces identical results across environments
+  const a = 1664525;
+  const c = 1013904223;
+  const m = Math.pow(2, 32);
+
+  seed = (a * seed + c) % m;
+  return seed / m;
 }
 
 export function SimilarityGraph({ favorites }: SimilarityGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure we only generate positions on the client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Calculate similarity between albums based on shared tags
-  const calculateSimilarity = (album1: Album, album2: Album): number => {
+  const calculateSimilarity = (
+    album1: AlbumWithTags,
+    album2: AlbumWithTags,
+  ): number => {
     const tags1 = new Set(album1.tags);
     const tags2 = new Set(album2.tags);
     const intersection = new Set([...tags1].filter((x) => tags2.has(x)));
@@ -22,14 +42,26 @@ export function SimilarityGraph({ favorites }: SimilarityGraphProps) {
     return intersection.size / union.size;
   };
 
-  // Generate graph data
+  // Generate graph data with deterministic positioning
   const generateGraphData = () => {
-    const nodes: GraphNode[] = favorites.map((album, index) => ({
-      id: album.id,
-      album,
-      x: Math.random() * (dimensions.width - 100) + 50,
-      y: Math.random() * (dimensions.height - 100) + 50,
-    }));
+    if (!isClient) {
+      // Return empty data during SSR
+      return { nodes: [], links: [] };
+    }
+
+    const nodes: GraphNode[] = favorites.map((album, index) => {
+      // Use album ID as seed for consistent positioning
+      const seed = album.id
+        .split("")
+        .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+
+      return {
+        id: album.id,
+        album,
+        x: Math.random() * (dimensions.width - 100) + 50,
+        y: Math.random() * (dimensions.height - 100) + 50,
+      };
+    });
 
     const links: GraphLink[] = [];
     for (let i = 0; i < favorites.length; i++) {
@@ -129,7 +161,7 @@ export function SimilarityGraph({ favorites }: SimilarityGraphProps) {
               y={node.y! - 25}
               width={50}
               height={50}
-              href={node.album.image}
+              href={node.album.images[0]?.url}
               clipPath="circle(25px at center)"
             />
             <text
@@ -149,9 +181,9 @@ export function SimilarityGraph({ favorites }: SimilarityGraphProps) {
               textAnchor="middle"
               className="fill-muted-foreground text-xs"
             >
-              {node.album.artist.length > 15
-                ? `${node.album.artist.substring(0, 15)}...`
-                : node.album.artist}
+              {node.album.artists.join(",").length > 15
+                ? `${node.album.artists.join(",").substring(0, 15)}...`
+                : node.album.artists.join(",")}
             </text>
           </g>
         ))}

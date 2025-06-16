@@ -3,7 +3,7 @@ import MusicSimilarityApp from "../_components/graph/MusicGraph";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 
 export default async function Page() {
-  void api.spotify.getFavorites.prefetch();
+  void api.spotify.getFavoritesFull.prefetch();
 
   return (
     <HydrateClient>
