@@ -51,9 +51,6 @@ export function SimilarityGraph({ favorites }: SimilarityGraphProps) {
 
     const nodes: GraphNode[] = favorites.map((album, index) => {
       // Use album ID as seed for consistent positioning
-      const seed = album.id
-        .split("")
-        .reduce((acc, char) => acc + char.charCodeAt(0), 0);
 
       return {
         id: album.id,
@@ -146,51 +143,56 @@ export function SimilarityGraph({ favorites }: SimilarityGraphProps) {
         })}
 
         {/* Nodes */}
-        {nodes.map((node) => (
-          <g key={node.id}>
-            <circle
-              cx={node.x}
-              cy={node.y}
-              r={30}
-              fill="white"
-              stroke="#e2e8f0"
-              strokeWidth={2}
-            />
-            <image
-              x={node.x! - 25}
-              y={node.y! - 25}
-              width={50}
-              height={50}
-              href={node.album.images[0]?.url}
-              clipPath="circle(25px at center)"
-            />
-            <text
-              x={node.x}
-              y={node.y! + 45}
-              textAnchor="middle"
-              className="fill-foreground text-xs font-medium"
-              style={{ maxWidth: "100px" }}
-            >
-              {node.album.name.length > 15
-                ? `${node.album.name.substring(0, 15)}...`
-                : node.album.name}
-            </text>
-            <text
-              x={node.x}
-              y={node.y! + 58}
-              textAnchor="middle"
-              className="fill-muted-foreground text-xs"
-            >
-              {node.album.artists.join(",").length > 15
-                ? `${node.album.artists.join(",").substring(0, 15)}...`
-                : node.album.artists.join(",")}
-            </text>
-          </g>
-        ))}
+        {nodes.map((node) => {
+          const artists = node.album.artists
+            .map((artist) => artist.name)
+            .join(", ");
+          return (
+            <g key={node.id}>
+              <circle
+                cx={node.x}
+                cy={node.y}
+                r={30}
+                fill="white"
+                stroke="#e2e8f0"
+                strokeWidth={2}
+              />
+              <image
+                x={node.x! - 25}
+                y={node.y! - 25}
+                width={50}
+                height={50}
+                href={node.album.images[0]?.url}
+                clipPath="circle(25px at center)"
+              />
+              <text
+                x={node.x}
+                y={node.y! + 45}
+                textAnchor="middle"
+                className="fill-foreground text-xs font-medium"
+                style={{ maxWidth: "100px" }}
+              >
+                {node.album.name.length > 15
+                  ? `${node.album.name.substring(0, 25)}...`
+                  : node.album.name}
+              </text>
+              <text
+                x={node.x}
+                y={node.y! + 58}
+                textAnchor="middle"
+                className="fill-muted-foreground text-xs"
+              >
+                {artists.length > 15
+                  ? `${artists.substring(0, 25)}...`
+                  : artists}
+              </text>
+            </g>
+          );
+        })}
       </svg>
 
       {/* Legend */}
-      <div className="bg-muted/50 mt-4 rounded-lg p-4">
+      <div className="bg-muted/50 mt-4 rounded-lg p-4 px-16">
         <h4 className="mb-2 font-medium">Graph Legend</h4>
         <div className="text-muted-foreground flex items-center gap-4 text-sm">
           <div className="flex items-center gap-2">
