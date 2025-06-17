@@ -10,13 +10,12 @@ import { AppSidebar } from "./AppSidebar";
 import { SimilarityGraph } from "./SimilarityGraph";
 import { TagDialog } from "./TagDialog";
 import type { Album, Tag } from "./types";
-import { predefinedTags } from "./mock-data";
 import { UserButton } from "@clerk/nextjs";
 import { api } from "~/trpc/react";
 
 export default function MusicSimilarityApp() {
   const [favorites] = api.spotify.getFavoritesFull.useSuspenseQuery();
-  const [availableTags, setAvailableTags] = useState<Tag[]>(predefinedTags);
+  const [availableTags, setAvailableTags] = useState<Tag[]>([]); // TODO
   const [selectedAlbumForTagging, setSelectedAlbumForTagging] =
     useState<Album | null>(null);
 
@@ -30,15 +29,20 @@ export default function MusicSimilarityApp() {
     },
   });
 
+  const removeFavorite = api.spotify.removeFavorite.useMutation({
+    onSuccess: async () => {
+      await utils.spotify.invalidate();
+    },
+  });
+
   const handleAddToFavorites = (id: string) => {
     addFavorite.mutate({
       albumId: id,
     });
   };
 
-  // TODO
   const handleRemoveFromFavorites = (id: string) => {
-    addFavorite.mutate({
+    removeFavorite.mutate({
       albumId: id,
     });
   };

@@ -59,6 +59,27 @@ export const spotifyRouter = createTRPCRouter({
         },
       });
     }),
+  removeFavorite: privateProcedure
+    .input(z.object({ albumId: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx.auth;
+      if (!userId) throw new Error("Not authenticated");
+
+      const album = await ctx.db.favoriteAlbum.findFirst({
+        where: {
+          albumId: input.albumId,
+          userId,
+        },
+      });
+      if (!album) throw new Error("Album not found");
+
+      return ctx.db.favoriteAlbum.delete({
+        where: {
+          albumId: input.albumId,
+          userId,
+        },
+      });
+    }),
   // getFavorites: privateProcedure.query(async ({ ctx }) => {
   //   const { userId } = ctx.auth;
   //   if (!userId) throw new Error("Not authenticated");

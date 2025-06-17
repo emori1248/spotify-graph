@@ -18,14 +18,6 @@ export function AlbumSearch({ onAddToFavorites, favorites }: AlbumSearchProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
 
-  // const utils = api.useUtils();
-
-  // const addFavorite = api.spotify.createFavorite.useMutation({
-  //   onSuccess: async () => {
-  //     await utils.spotify.invalidate();
-  //   },
-  // });
-
   const {
     data: searchResults,
     isLoading,

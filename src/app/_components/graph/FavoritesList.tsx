@@ -41,8 +41,7 @@ export function FavoritesList({
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">{album.name}</p>
                 <p className="text-muted-foreground truncate text-xs">
-                  {/* TODO */}
-                  {album.artists[0]?.name}
+                  {album.artists.map((artist) => artist.name).join(", ")}
                 </p>
                 <div className="mt-1 flex flex-wrap gap-1">
                   {/* TODO needs to pull user tags */}
