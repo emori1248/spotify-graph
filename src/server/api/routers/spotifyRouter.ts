@@ -28,24 +28,14 @@ export const spotifyRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const items = await ctx.spotify.search(input.input, ["album"]);
 
-      const albums =
-        items.albums?.items.map((album) => ({
-          id: album.id,
-          name: album.name,
-          artists: album.artists.map((artist) => ({
-            id: artist.id,
-            name: artist.name,
-          })),
-          images: album.images,
-          genres: ["test genre"],
-        })) || [];
-
       const artistIds = new Set(
-        albums.map((album) => album.artists.map((a) => a.id)).flat(),
+        items.albums?.items
+          .map((album) => album.artists.map((a) => a.id))
+          .flat(),
       );
       const artists = await ctx.spotify.artists.get(Array.from(artistIds));
 
-      return albums.map((album) => ({
+      return items.albums?.items.map((album) => ({
         ...album,
         genres: artists
           .find((a) => album.artists.some((aa) => aa.id === a.id))
