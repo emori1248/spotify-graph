@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Album, GraphNode, GraphLink, AlbumWithTags } from "./types";
+import Link from "next/link";
 
 interface SimilarityGraphProps {
   favorites: AlbumWithTags[];
@@ -148,45 +149,52 @@ export function SimilarityGraph({ favorites }: SimilarityGraphProps) {
             .map((artist) => artist.name)
             .join(", ");
           return (
-            <g key={node.id}>
-              <circle
-                cx={node.x}
-                cy={node.y}
-                r={30}
-                fill="white"
-                stroke="#e2e8f0"
-                strokeWidth={2}
-              />
-              <image
-                x={node.x! - 25}
-                y={node.y! - 25}
-                width={50}
-                height={50}
-                href={node.album.images[0]?.url}
-                clipPath="circle(25px at center)"
-              />
-              <text
-                x={node.x}
-                y={node.y! + 45}
-                textAnchor="middle"
-                className="fill-foreground text-xs font-medium"
-                style={{ maxWidth: "100px" }}
-              >
-                {node.album.name.length > 15
-                  ? `${node.album.name.substring(0, 25)}...`
-                  : node.album.name}
-              </text>
-              <text
-                x={node.x}
-                y={node.y! + 58}
-                textAnchor="middle"
-                className="fill-muted-foreground text-xs"
-              >
-                {artists.length > 15
-                  ? `${artists.substring(0, 25)}...`
-                  : artists}
-              </text>
-            </g>
+            <Link
+              href={node.album.external_urls.spotify}
+              key={node.id}
+              className="group hover:underline"
+            >
+              <g key={node.id}>
+                <circle
+                  cx={node.x}
+                  cy={node.y}
+                  r={30}
+                  fill="white"
+                  stroke="#e2e8f0"
+                  className="group-hover:fill-sidebar-accent group-hover:stroke-sidebar-accent-foreground transition-colors"
+                  strokeWidth={2}
+                />
+                <image
+                  x={node.x! - 25}
+                  y={node.y! - 25}
+                  width={50}
+                  height={50}
+                  href={node.album.images[0]?.url}
+                  clipPath="circle(25px at center)"
+                />
+                <text
+                  x={node.x}
+                  y={node.y! + 45}
+                  textAnchor="middle"
+                  className="fill-foreground text-xs font-medium"
+                  style={{ maxWidth: "100px" }}
+                >
+                  {node.album.name.length > 15
+                    ? `${node.album.name.substring(0, 25)}...`
+                    : node.album.name}
+                </text>
+                <text
+                  x={node.x}
+                  y={node.y! + 58}
+                  textAnchor="middle"
+                  className="fill-muted-foreground text-xs"
+                >
+                  {artists.length > 15
+                    ? `${artists.substring(0, 25)}...`
+                    : artists}
+                </text>
+              </g>
+            </Link>
           );
         })}
       </svg>
