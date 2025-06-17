@@ -37,7 +37,7 @@ export function TagDialog({
   // Update selected tags when album changes
   useEffect(() => {
     if (album) {
-      setSelectedTags(album.tags);
+      setSelectedTags([]); // TODO
     }
   }, [album]);
 
@@ -79,13 +79,15 @@ export function TagDialog({
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <img
-              src={album.image || "/placeholder.svg"}
+              src={album?.images[0]?.url || "/placeholder.svg"}
               alt={album.name}
               className="h-12 w-12 rounded object-cover"
             />
             <div>
               <p className="font-medium">{album.name}</p>
-              <p className="text-muted-foreground text-sm">{album.artist}</p>
+              <p className="text-muted-foreground text-sm">
+                {album.artists.map((a) => a.name).join(", ")}
+              </p>
             </div>
           </div>
 
