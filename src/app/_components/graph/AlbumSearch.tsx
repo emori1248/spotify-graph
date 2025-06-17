@@ -21,7 +21,7 @@ export function AlbumSearch({ onAddToFavorites, favorites }: AlbumSearchProps) {
   const {
     data: searchResults,
     isLoading,
-    error,
+    error: _, // TODO
   } = api.spotify.searchAlbums.useQuery(
     { input: submittedQuery },
     {

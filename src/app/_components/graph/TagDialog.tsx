@@ -79,7 +79,7 @@ export function TagDialog({
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <img
-              src={album?.images[0]?.url || "/placeholder.svg"}
+              src={album?.images[0]?.url ?? "/placeholder.svg"}
               alt={album.name}
               className="h-12 w-12 rounded object-cover"
             />

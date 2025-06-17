@@ -53,6 +53,7 @@ export default function MusicSimilarityApp() {
   };
 
   const handleUpdateAlbumTags = (albumId: string, tags: string[]) => {
+    const _ = [albumId, tags];
     // TODO
     // setFavorites((prev) =>
     //   prev.map((album) => (album.id === albumId ? { ...album, tags } : album)),

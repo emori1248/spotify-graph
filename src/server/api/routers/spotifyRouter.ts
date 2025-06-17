@@ -19,7 +19,7 @@ export const spotifyRouter = createTRPCRouter({
           genres: artist.genres,
           images: artist.images,
           followers: artist.followers,
-        })) || [];
+        })) ?? [];
 
       return artists;
     }),
@@ -47,7 +47,7 @@ export const spotifyRouter = createTRPCRouter({
                   word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
               )
               .join(" "),
-          ) || ["Unknown Genre"],
+          ) ?? ["Unknown Genre"],
       }));
     }),
   createFavorite: privateProcedure
