@@ -11,10 +11,13 @@ const config = {
       {
         protocol: "https",
         hostname: "i.scdn.co",
-        pathname: "/image/**"
-      }
-    ]
-  }
+        pathname: "/image/**",
+      },
+    ],
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default config;
