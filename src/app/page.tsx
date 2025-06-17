@@ -1,4 +1,5 @@
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 import { HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
@@ -13,7 +14,18 @@ export default async function Home() {
             Thing
           </h1>
           <SignedIn>
-            <UserButton />
+            <div className="flex flex-col items-center space-y-4">
+              <Link
+                href="/graph"
+                className="hover:bg-accent-foreground/20 bg-accent-foreground/10 cursor-pointer rounded-lg px-8 py-3 text-lg font-semibold text-black shadow-lg transition-all hover:shadow-xl"
+              >
+                Take me to the thing!
+              </Link>
+              <span className="text-muted-foreground text-sm italic">
+                (Sometimes OAuth doesn't redirect properly - that's what this
+                button is for.)
+              </span>
+            </div>
           </SignedIn>
           <SignedOut>
             <div className="flex flex-col items-center gap-4">
