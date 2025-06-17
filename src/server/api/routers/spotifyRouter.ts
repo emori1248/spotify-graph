@@ -40,7 +40,25 @@ export const spotifyRouter = createTRPCRouter({
           genres: ["test genre"],
         })) || [];
 
-      return albums;
+      const artistIds = new Set(
+        albums.map((album) => album.artists.map((a) => a.id)).flat(),
+      );
+      const artists = await ctx.spotify.artists.get(Array.from(artistIds));
+
+      return albums.map((album) => ({
+        ...album,
+        genres: artists
+          .find((a) => album.artists.some((aa) => aa.id === a.id))
+          ?.genres.map((str) =>
+            str
+              .split(" ")
+              .map(
+                (word) =>
+                  word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+              )
+              .join(" "),
+          ) || ["Unknown Genre"],
+      }));
     }),
   createFavorite: privateProcedure
     .input(z.object({ albumId: z.string().min(1) }))
@@ -97,6 +115,10 @@ export const spotifyRouter = createTRPCRouter({
       where: { userId },
       select: { albumId: true },
     });
+
+    if (favorites.length === 0) {
+      return [];
+    }
 
     return ctx.spotify.albums
       .get(favorites.map((f) => f.albumId))
