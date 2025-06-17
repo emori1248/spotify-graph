@@ -1,7 +1,5 @@
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { api, HydrateClient } from "~/trpc/server";
-import { FavoritesList } from "./_components/FavoritesList";
-import Greeting from "./_components/Greeting";
+import { HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
   return (
