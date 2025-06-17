@@ -48,7 +48,7 @@ function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-center">
           <a
-            href="https://github.com/emori1248"
+            href="https://github.com/emori1248/spotify-graph"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-foreground transition-colors"
