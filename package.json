@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "next build && pnpm sentry:sourcemaps",
     "check": "next lint && tsc --noEmit",
     "db:generate": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
@@ -18,7 +18,8 @@
     "lint:fix": "next lint --fix",
     "preview": "next build && next start",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org emori1248 --project spotify-graph ./.next/static && sentry-cli sourcemaps upload --org emori1248 --project spotify-graph ./.next/static"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.22.0",
@@ -29,6 +30,7 @@
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
+    "@sentry/cli": "^2.46.0",
     "@sentry/nextjs": "^9.30.0",
     "@spotify/web-api-ts-sdk": "^1.2.0",
     "@t3-oss/env-nextjs": "^0.12.0",

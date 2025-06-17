@@ -2,6 +2,7 @@
   "compilerOptions": {
     /* Base Options: */
     "esModuleInterop": true,
+
     "skipLibCheck": true,
     "target": "es2022",
     "allowJs": true,
@@ -12,11 +13,13 @@
 
     /* Strictness */
     "strict": true,
+
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
 
     /* Bundled projects */
     "lib": ["dom", "dom.iterable", "ES2022"],
+
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -26,9 +29,18 @@
 
     /* Path Aliases */
     "baseUrl": ".",
+
     "paths": {
       "~/*": ["./src/*"]
-    }
+    },
+
+    "sourceMap": true,
+    "inlineSources": true,
+
+    // Set `sourceRoot` to  "/" to strip the build path prefix
+    // from generated source code references.
+    // This improves issue grouping in Sentry.
+    "sourceRoot": "/"
   },
   "include": [
     "next-env.d.ts",
